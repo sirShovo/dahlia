@@ -11,7 +11,7 @@
     header('Location: index.php');
   }
 
-  if ($_SERVER['REQUEST_METHOD'] == 'POST') { // Si se envian datos por el formulario
+  if ($_SERVER['REQUEST_METHOD'] == 'GET') { // Si se envian datos por el formulario
     $tipo_documento = limpiarDatos($_POST['tipo_documento']); 
     $apellidos = limpiarDatos($_POST['apellidos']); 
     $documento = limpiarDatos($_POST['documento']); 
@@ -21,11 +21,11 @@
     $password2 = $_POST['password-2'];
     $password = $_POST['password'];
 
-    if ($password !== $password2) { // Si esta vacio el formulario mostramos error
+    if ($password !== $password2) { // Si las contraseñas no son las mismas mostramos el error
       $error = 'Las contraseñas no son las mismas.';
     } else { // Sino, hacemos consulta a la base de datos
       $sentencia = $conexion->prepare("SELECT * FROM usuarios WHERE correo_usuario = '$correo' OR documento_usuario = '$documento' LIMIT 1");
-      $sentencia->execute();
+      $sentencia->execute(); // Validar que el correo o el documento no existan en la base datos
       $resultado = $sentencia->fetch();
       
       if ($resultado != false) {

@@ -1,6 +1,6 @@
 <?php 
   require_once('control/funciones.php');
-  $login = true;
+  $login = true; // Esta variable dice que estoy en login, entonces en el header no puede aparecer ese boton
 
   $conexion = conexion();
   if (!$conexion) { // Si no hay conexion a la base de datos, mandamos a la pagina de error
@@ -23,7 +23,7 @@
     if (empty($correo) or empty($password)) { // Si esta vacio el formulario mostramos error
       $error = 'No pueden haber campos vacios';
     } else { // Sino, hacemos consulta a la base de datos
-      $password = hash('sha512', $password);
+      $password = hash('sha512', $password); // Aplicamos encriptacion a la contraseña
       $sentencia = $conexion->prepare("SELECT * FROM usuarios WHERE correo_usuario = '$correo' AND password_usuario = '$password' LIMIT 1");
       $sentencia->execute();
       $resultado = $sentencia->fetch();
@@ -31,7 +31,7 @@
       if ($resultado != false) {
         $_SESSION['usuario'] = $resultado['id_usuario'];
         $_SESSION['tipo'] = $resultado['tipo_usuario'];
-        $_SESSION['tiempo'] = time();
+        $_SESSION['tiempo'] = time(); // Guarda la ultima actividad que se hizo en php y no en javascript
 
         if ($resultado['tipo_usuario']) {
           header('Location: dashboard/index.php');
@@ -40,7 +40,6 @@
         }
       } else {
         $error = 'Credenciales incorrectas, intenta de nuevo';
-      
       }
     }
   }
@@ -127,7 +126,7 @@
   
   <?php require_once('vistas/scripts.php'); ?>
   <?php if(isset($error)): ?>
-    <script>
+    <script> // Modal que muestra el error
       Swal.fire({
         title: '¡Noo!',
         text: '<?php echo($error); ?>',

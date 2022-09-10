@@ -1,5 +1,5 @@
 <?php
-  require_once('control/funciones.php');
+  require_once('control/funciones.php'); // Requiere de este archivo una vez para funcionar, si no lo encuentra tira error
   
   $conexion = conexion();
   if (!$conexion) { // Si no hay conexion a la base de datos, mandamos a la pagina de error
@@ -7,23 +7,23 @@
   }
   require_once('control/traer_categorias.php');
   
-  // Configuraciones
+  // Configuraciones de la base de datos
   $sentencia = $conexion->prepare("SELECT * FROM configuraciones");
   $sentencia->execute();
   $configuraciones = $sentencia->fetchAll();
 
-  // Ultimos productos agregados
+  // Ultimos productos agregados, El INNER JOIN es para traer datos de otras tablas cuando tienen una relacion 
   $sentencia = $conexion->prepare("SELECT * FROM productos 
     INNER JOIN categorias ON productos.id_categoria = categorias.id_categoria 
     ORDER BY id_producto DESC LIMIT ".$configuraciones[0]['valor_configuracion']."
-  ");
-  $sentencia->execute();
-  $productos = $sentencia->fetchAll();
-  $categoriasUsadas = array();
+  "); // Preparamos la consulta SQL para traer los ultimos productos dependiendo de la configuracion
+  $sentencia->execute(); // Ejecuta la sentencia (la consulta sql)
+  $productos = $sentencia->fetchAll(); // Tomamos solo los dados la consulta sql
+  $categoriasUsadas = array(); // Creamos la variable que va a guardar las categorias existentes dentro de los procutos
 
-  foreach ($productos as $producto) {
-    if (!in_array($producto['nombre_categoria'], $categoriasUsadas)) {
-      array_push($categoriasUsadas, $producto['nombre_categoria']);
+  foreach ($productos as $producto) { // Recorremos los productos y guardamos la categoria si no existe en el arreglo
+    if (!in_array($producto['nombre_categoria'], $categoriasUsadas)) { // Si la categoria que tiene el producto no esta dentro del arreglo, se guarda
+      array_push($categoriasUsadas, $producto['nombre_categoria']); // Guardamos la categoria dentro del array
     }
   }
 
@@ -34,8 +34,8 @@
   $sentencia->execute();
   $testimonios = $sentencia->fetchAll();
 
-  if(isset($_GET['compra'])) {
-    $mensaje = "La compra se ha hecho exitosamente, valídala en tu perfíl";
+  if(isset($_GET['compra'])) { // Si la variable compra se envia por la url, mostramos el mensaje de compra
+    $mensaje = "La compra se ha hecho exitosamente, valídala en tu perfíl"; // Seteamos el mensaje de compra
   }
 ?>
 
@@ -124,7 +124,6 @@
         <div class="catagory-content">
           <h6>En Accesorios</h6>
           <h2>30% Descuento</h2>
-          <!-- <a href="#" class="btn karl-btn">Ver Ahora</a> -->
         </div>
       </div>
       <div
@@ -134,7 +133,6 @@
         <div class="catagory-content">
           <h6>En Conjuntos y Bolsos</h6>
           <h2>Nuevos Diseños</h2>
-          <!-- <a href="#" class="btn karl-btn">Ver Ahora</a> -->
         </div>
       </div>
     </section>
